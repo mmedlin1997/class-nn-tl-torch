@@ -53,6 +53,33 @@ def train_val_split_test(train, val_size):
   datasets['val'] = Subset(train, val_idx)
   return datasets
 
+# Function to get classification models
+def get_torch_model(model):
+  if model=='resnet18':
+    return torchvision.models.resnet18(pretrained=True)
+  elif model=='alexnet':
+    return torchvision.models.alexnet(pretrained=True)
+  elif model=='squeezenet':
+    return torchvision.models.squeezenet1_0(pretrained=True)
+  elif model=='vgg16':
+    return torchvision.models.vgg16(pretrained=True)
+  elif model=='densenet':
+    return torchvision.models.densenet161(pretrained=True)
+  elif model=='inception':
+    return torchvision.models.inception_v3(pretrained=True)
+  elif model=='googlenet':
+    return torchvision.models.googlenet(pretrained=True)
+  elif model=='shufflenet':
+    return torchvision.models.shufflenet_v2_x1_0(pretrained=True)
+  elif model=='mobilenet':
+    return torchvision.models.mobilenet_v2(pretrained=True)
+  elif model=='resnext50_32x4d':
+    return torchvision.models.resnext50_32x4d(pretrained=True)
+  elif model=='wide_resnet50_2':
+    return torchvision.models.wide_resnet50_2(pretrained=True)
+  elif model=='mnasnet':
+    return torchvision.models.mnasnet1_0(pretrained=True)
+
 # Define function to train the model
 def train_model(model, criterion, optimizer, scheduler, epochs=25):
   start = timer()
@@ -352,6 +379,16 @@ if __name__ == '__main__':
   class_names = image_datasets['train'].classes
   print('Classes:', class_names)
 
+  # Show models
+  models = [ 'resnet18', 'alexnet', 'squeezenet', 'vgg16', 'inception', 
+    'googlenet', 'shufflenet', 'mobilenet', 'resnext50_32x4d', 'wide_resnet50_2', 'mnasnet']
+  for mdl in models:
+    print('Model: ' + mdl)
+    print_model(get_torch_model(mdl), (3,224,224))
+    input('Press Enter for next model summary...')
+    print()
+  exit()
+
   if args.train:
     # Create training dataloaders (iterable object over a dataset)
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=10, shuffle=True, num_workers=4)
@@ -359,10 +396,6 @@ if __name__ == '__main__':
 
     # Show some images to verify dataset and dataloaders are functional
     #show_images(dataloaders['train'], class_names, 'train')
-    
-    # Show model
-    print_model(models.resnet18(pretrained=True), (3,500,250)) # ResNet18 output layer Linear-68 = 1000 nodes
-    print()
 
     # Train model -> fine-tuning transfer learning
     model_ft = models.resnet18(pretrained=True)         # start with pretrained model
